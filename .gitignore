@@ -1,0 +1,9 @@
+#matunity-api ignores
+
+matunity-api/app/configs/config.yaml
+matunity-api/phinx.yml
+matunity-api/cron/lib
+matunity-api/vendor
+matunity-api/node_modules
+
+#matunity ignores
