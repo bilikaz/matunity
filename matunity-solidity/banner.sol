@@ -1349,6 +1349,15 @@ contract Banner is TimedNFT {
         fundingRate = _fundingRate;
     }
 
+    function setFundableContract(address _fundableContract)
+        external
+        onlyOwner
+    {
+        require(Address.isContract(_fundableContract), "Error: fundable address should be a contract");
+
+        fundableContract = Fundable(_fundableContract);
+    }
+
     function setFundingRate(uint256 _fundingRate)
         external
         onlyOwner
@@ -1377,6 +1386,6 @@ banner
 1000000000000000000 000
 https://api.matunity.app/banners/
 6048 00
-0x6Ad52E48780589f80336BD126295B405afC9a3cd
+0xfcedf3a26d97576bfca95b001d38429b662ea2fa
 8000
 */
