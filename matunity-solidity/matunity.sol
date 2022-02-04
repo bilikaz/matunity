@@ -1334,6 +1334,34 @@ contract Matunity is OnChainDataNFT {
         prizePool = prizePool + msg.value;
     }
 
+    function setCommissionsNFT(uint256 _commissionsNFT)
+        external
+        onlyOwner
+    {
+        commissionsNFT = _commissionsNFT;
+    }
+
+    function setCommissionsDevs(uint256 _commissionsDevs)
+        external
+        onlyOwner
+    {
+        commissionsDevs = _commissionsDevs;
+    }
+
+    function setCommissionsPool(uint256 _commissionsPool)
+        external
+        onlyOwner
+    {
+        commissionsPool = _commissionsPool;
+    }
+
+    function setCommissionsMintPool(uint256 _commissionsMintPool)
+        external
+        onlyOwner
+    {
+        commissionsMintPool = _commissionsMintPool;
+    }
+
     function setRoolPrice(uint256 _roolPrice)
         external
         onlyOwner
@@ -1525,8 +1553,8 @@ contract Matunity is OnChainDataNFT {
 
 
 /*
-mat_test1
-mat_test1
+matunity
+matunity
 35
 1000000000000000000 000
 https://api.matunity.app/blocks/

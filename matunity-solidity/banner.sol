@@ -1307,8 +1307,8 @@ abstract contract TimedNFT is OnChainDataNFT {
         if (mintTimes[_tokenId] > 0 && mintTimes[_tokenId] + lifeTime < block.timestamp) {
             _burn(_tokenId);
         }
-        mintTimes[_tokenId] = block.timestamp;
         super.mint(_tokenId);
+        mintTimes[_tokenId] = block.timestamp;
     }
 
     function _transfer(address _from, address _to, uint256 _tokenId)
@@ -1371,8 +1371,8 @@ contract Banner is TimedNFT {
 
 
 /*
-ban_test1
-ban_test1
+banner
+banner
 20
 1000000000000000000 000
 https://api.matunity.app/banners/

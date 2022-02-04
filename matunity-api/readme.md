@@ -19,6 +19,8 @@ cli tasks
     php app/cli.php App\\Block\\Task\\Monitor scan   --return amount of events
     php app/cli.php App\\Block\\Task\\Monitor process    --returns amount of unprocessed events
 
+    php app/cli.php App\\Banner\\Task\\Monitor scan   --return amount of events
+    php app/cli.php App\\Banner\\Task\\Monitor process    --returns amount of unprocessed events
 
 cron tab registration and start
 
