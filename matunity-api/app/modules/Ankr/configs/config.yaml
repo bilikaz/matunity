@@ -1,0 +1,4 @@
+modules:
+  ankr:
+    namespace: "App\\Ankr"
+

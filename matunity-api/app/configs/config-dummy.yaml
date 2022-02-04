@@ -1,0 +1,96 @@
+application:
+  timezone: "GMT"
+  debug: true
+  name: "Matunity"
+  uri: "https://api.matunity.app/"
+  modules:
+    - block
+    - banner
+    - ankr
+
+  services:
+    db:
+      className: "\\Phalcon\\Db\\Adapter\\Pdo\\Mysql"
+      params:
+        settings:
+          host: "localhost"
+          port: "3306"
+          username: "matunity-api"
+          password: ""
+          dbname: "matunity-api"
+          options:
+            1002: "SET NAMES utf8"
+    cache:
+      className: "\\Phalcon\\Cache\\Adapter\\Redis"
+      signature: ['frontend', 'settings']
+      params:
+        frontend:
+          className: "\\Phalcon\\Storage\\SerializerFactory"
+        settings:
+          host: "127.0.0.1"
+          port: "6379"
+          persistent: false
+          index: 1
+          defaultSerializer : "Php"
+          prefix            : "matunity-api"
+          lifetime          : 7200
+    blockAnkrManager:
+      className: "\\App\\Ankr\\Service\\AnkrManager"
+      signature: ['apiUri', 'contractAddress', 'tokenDataFormat']
+      params:
+        apiUri: ""
+        contractAddress: ""
+        tokenDataFormat:
+          - field: "name"
+            format: "string"
+          - field: "description"
+            format: "string"
+          - field: "content"
+            format: "string"
+          - field: "earned"
+            format: "decimal"
+            precision: 18
+          - field: "claimed"
+            format: "decimal"
+            precision: 18
+
+    bannerAnkrManager:
+      className: "\\App\\Ankr\\Service\\AnkrManager"
+      signature: ['apiUri', 'contractAddress', 'tokenDataFormat']
+      params:
+        apiUri: ""
+        contractAddress: ""
+        tokenDataFormat:
+          - field: "name"
+            format: "string"
+          - field: "description"
+            format: "string"
+          - field: "content"
+            format: "string"
+          - field: "timestamp_lifetime"
+            format: "int"
+
+  eventsManagers:
+    authManager:
+      className: "App\\Library\\Api\\EventsManager\\AuthManager"
+
+    responseManager:
+      className: "App\\Library\\Api\\EventsManager\\ResponseManager"
+      signature: ['application', 'defaultResponse']
+      params:
+        application:
+          di: "application"
+        defaultResponse:
+          className: "App\\Library\\Api\\Response\\JsonResponse"
+
+    routeManager:
+      className: "App\\Library\\Api\\EventsManager\\RouteManager"
+      signature: ['defaultRequestMapper', 'authManager']
+      params:
+        defaultRequestMapper:
+          className: "App\\Library\\Api\\Request\\Mapper\\JsonRequestMapper"
+        authManager:
+          di: "authManager"
+
+
+

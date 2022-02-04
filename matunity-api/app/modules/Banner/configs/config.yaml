@@ -1,0 +1,32 @@
+modules:
+  banner:
+    namespace: "App\\Banner"
+    routers:
+      user:
+        pattern: "\\/banners(\\/.*)?"
+        prefix: "\\/"
+        namespace: "App\\Banner\\UserController"
+        params:
+          defaultRoute:
+            className: "App\\Library\\Api\\Route\\DefaultRoute"
+            params:
+              authEnabled: false
+
+    params:
+      size: 100
+      count: 35
+
+application:
+  services:
+    bannerManager:
+      className: "App\\Banner\\Service\\BannerManager"
+      services:
+        config:
+          di: "config"
+        bannersRepository:
+          di: "bannersRepository"
+
+  repositories:
+    bannersRepository: "App\\Banner\\Repository\\BannersRepository"
+    bannerSettingsRepository: "App\\Banner\\Repository\\BannerSettingsRepository"
+    bannerEventsRepository: "App\\Banner\\Repository\\BannerEventsRepository"

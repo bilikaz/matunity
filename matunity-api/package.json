@@ -1,0 +1,20 @@
+{
+  "name": "matunity-api",
+  "version": "1.0.0",
+  "description": "cron tab",
+  "main": "index.js",
+  "scripts": {
+    "flow": "flow",
+    "flow:check": "flow check ./cron/src/",
+    "build": "babel cron/src/ -d cron/lib/",
+    "prepublish": "npm run build"
+  },
+  "author": "",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "node-cron": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
+  }
+}

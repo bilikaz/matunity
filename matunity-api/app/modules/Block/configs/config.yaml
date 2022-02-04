@@ -1,0 +1,32 @@
+modules:
+  block:
+    namespace: "App\\Block"
+    routers:
+      user:
+        pattern: "\\/blocks(\\/.*)?"
+        prefix: "\\/"
+        namespace: "App\\Block\\UserController"
+        params:
+          defaultRoute:
+            className: "App\\Library\\Api\\Route\\DefaultRoute"
+            params:
+              authEnabled: false
+
+    params:
+      size: 100
+      count: 35
+
+application:
+  services:
+    blockManager:
+      className: "App\\Block\\Service\\BlockManager"
+      services:
+        config:
+          di: "config"
+        blocksRepository:
+          di: "blocksRepository"
+
+  repositories:
+    blocksRepository: "App\\Block\\Repository\\BlocksRepository"
+    blockSettingsRepository: "App\\Block\\Repository\\BlockSettingsRepository"
+    blockEventsRepository: "App\\Block\\Repository\\BlockEventsRepository"

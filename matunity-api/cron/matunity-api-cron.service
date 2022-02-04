@@ -1,0 +1,14 @@
+[Unit]
+Description=matunity-api crontab
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/matunity-api
+User=33
+Environment="DEBUG_DEPTH=6"
+Environment="DEBUG=errors,logs"
+ExecStart=/usr/bin/node /var/www/matunity-api/cron/lib/index.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
