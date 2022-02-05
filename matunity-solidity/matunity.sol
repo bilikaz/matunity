@@ -1284,11 +1284,11 @@ contract Matunity is OnChainDataNFT {
     mapping(address => uint256) private points;
     mapping(address => uint256) private locations;
     mapping(address => uint256) private lastGames;
-    mapping(address => uint256) private lastRools;
+    mapping(address => uint256) private lastRolls;
     mapping(uint256 => uint256) private earningsNFT;
     mapping(uint256 => uint256) private claimsNFT;
 
-    uint256 public roolPrice;
+    uint256 public rollPrice;
     uint256 public pointPrice;
     uint256 public pointsPerGame;
     uint256 public cooldown;
@@ -1302,13 +1302,13 @@ contract Matunity is OnChainDataNFT {
     uint256 public commissionsPool;
     uint256 public commissionsMintPool;
 
-    event Rool(address indexed player, uint256 rool);
+    event Roll(address indexed player, uint256 roll);
     event Won(address indexed player, uint256 points);
     event Earned(uint256 indexed tokenId, uint256 amount);
     event ClaimedEarnings(uint256 indexed tokenId, uint256 amount);
     event ClaimedPrize(address indexed player, uint256 amount);
 
-    constructor(string memory _name, string memory _symbol, uint256 _tokenLimit, uint256 _mintPrice, string memory _baseURI, uint _roolPrice, uint _pointPrice, uint _pointsPerGame, uint256 _cooldown, uint _pointsForPrize, uint _prizePercentage)
+    constructor(string memory _name, string memory _symbol, uint256 _tokenLimit, uint256 _mintPrice, string memory _baseURI, uint _rollPrice, uint _pointPrice, uint _pointsPerGame, uint256 _cooldown, uint _pointsForPrize, uint _prizePercentage)
         MintableNFT(_name, _symbol, _tokenLimit, _mintPrice, _baseURI)
     {
         prizePool = 0;
@@ -1318,7 +1318,7 @@ contract Matunity is OnChainDataNFT {
         commissionsDevs = 20;
         commissionsPool = 60;
         commissionsMintPool = 80;
-        roolPrice = _roolPrice;
+        rollPrice = _rollPrice;
         pointPrice = _pointPrice;
         pointsPerGame = _pointsPerGame;
         cooldown = _cooldown;
@@ -1362,11 +1362,11 @@ contract Matunity is OnChainDataNFT {
         commissionsMintPool = _commissionsMintPool;
     }
 
-    function setRoolPrice(uint256 _roolPrice)
+    function setRollPrice(uint256 _rollPrice)
         external
         onlyOwner
     {
-        roolPrice = _roolPrice;
+        rollPrice = _rollPrice;
     }
 
     function setPointPrice(uint256 _pointPrice)
@@ -1404,27 +1404,36 @@ contract Matunity is OnChainDataNFT {
         prizePercentage = _prizePercentage;
     }
 
-    modifier isEligableToRool(address _player) {
-        require(msg.value >= roolPrice, "Payment error");
+    modifier isEligableToRoll(address _player) {
+        require(msg.value >= rollPrice, "Payment error");
         if (lastGames[_player] > 0) {
             require(lastGames[_player] + cooldown <= block.timestamp, "Cooldown is still valid");
         }
         _;
     }
 
-    function rool(uint256 _randomAdd)
+    function roll()
         external
         payable
-        isEligableToRool(_msgSender())
+        isEligableToRoll(_msgSender())
         returns (uint256, uint256, bool)
     {
-        uint256 _rool = (_randomAdd + block.timestamp) % 6 + 1;
+        return roll(0);
+    }
+
+    function roll(uint256 _randomAdd)
+        public
+        payable
+        isEligableToRoll(_msgSender())
+        returns (uint256, uint256, bool)
+    {
+        uint256 _roll = (_randomAdd + block.timestamp) % 6 + 1;
         bool _won = false;
 
-        emit Rool(_msgSender(), _rool);
+        emit Roll(_msgSender(), _roll);
 
         if (locations[_msgSender()] > 0) {
-            locations[_msgSender()] = locations[_msgSender()] + _rool;
+            locations[_msgSender()] = locations[_msgSender()] + _roll;
             if (locations[_msgSender()] > tokenLimit) {
                 locations[_msgSender()] = 0;
                 points[_msgSender()] = points[_msgSender()] + pointsPerGame;
@@ -1434,9 +1443,9 @@ contract Matunity is OnChainDataNFT {
                 emit Won(_msgSender(), pointsPerGame);
             }
         } else {
-            locations[_msgSender()] = _rool;
+            locations[_msgSender()] = _roll;
         }
-        lastRools[_msgSender()] = _rool;
+        lastRolls[_msgSender()] = _roll;
 
         if (locations[_msgSender()] > 0) {
             uint256 _amount = msg.value * commissionsNFT / 10000;
@@ -1451,7 +1460,7 @@ contract Matunity is OnChainDataNFT {
             prizePool = prizePool + msg.value * commissionsPool / 10000;
         }
 
-        return (_rool, locations[_msgSender()], _won);
+        return (_roll, locations[_msgSender()], _won);
     }
 
     function getPlayerData(address _player) view public returns(uint256, uint256, uint256, uint256, bool) {
@@ -1459,7 +1468,7 @@ contract Matunity is OnChainDataNFT {
         if (lastGames[_player] > 0 && lastGames[_player] + cooldown > block.timestamp) {
             _cooldown = true;
         }
-        return (lastRools[_player], locations[_player], points[_player], lastGames[_player], _cooldown);
+        return (lastRolls[_player], locations[_player], points[_player], lastGames[_player], _cooldown);
     }
 
     function mint(uint256 _tokenId)
