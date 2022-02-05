@@ -83,7 +83,7 @@ class MonitorTask extends Task
                 $blockImage = new Imagick();
                 $blockImage->readImageBlob(base64_decode(preg_replace('/data:image\/[^;]+;base64,/', '', $data['content'])));
                 $blockImage->adaptiveResizeImage($this->config->modules->block->params->size, $this->config->modules->block->params->size);
-                $block->content = (string) $blockImage;
+                $block->content = 'data:image/png;base64,' . base64_encode((string) $blockImage);
             } else {
                 $block->content = null;
             }

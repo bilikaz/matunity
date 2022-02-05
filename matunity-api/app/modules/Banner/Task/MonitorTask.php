@@ -90,7 +90,6 @@ class MonitorTask extends Task
         } elseif ($event->event == 'data') {
             $banner = $this->bannersRepository->getById($event->banner_id, true);
             $data = $this->bannerAnkrManager->getTokenData((int) $event->banner_id);
-
             $banner->name = $data['name'];
             $banner->description = $data['description'];
 
@@ -98,7 +97,7 @@ class MonitorTask extends Task
                 $bannerImage = new Imagick();
                 $bannerImage->readImageBlob(base64_decode(preg_replace('/data:image\/[^;]+;base64,/', '', $data['content'])));
                 $bannerImage->adaptiveResizeImage($this->config->modules->banner->params->size, $this->config->modules->banner->params->size);
-                $banner->content = (string) $bannerImage;
+                $banner->content = 'data:image/png;base64,' . base64_encode((string) $bannerImage);
             } else {
                 $banner->content = null;
             }

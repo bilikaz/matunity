@@ -32,3 +32,30 @@ cron.schedule('*/10 * * * * *', () => {
     })
 })
 
+cron.schedule('* * * * *', () => {
+    exec('php app/cli.php App\\\\Banner\\\\Task\\\\Monitor scan', (error, stdout, stderr) => {
+        if (error) {
+            errors('error', error)
+            return
+        }
+        if (stderr) {
+            errors('stderr', stderr)
+            return
+        }
+        logs('php app/cli.php App\\\\Banner\\\\Task\\\\Monitor scan', stdout)
+    })
+})
+
+cron.schedule('*/10 * * * * *', () => {
+    exec('php app/cli.php App\\\\Banner\\\\Task\\\\Monitor process', (error, stdout, stderr) => {
+        if (error) {
+            errors('error', error)
+            return
+        }
+        if (stderr) {
+            errors('stderr', stderr)
+            return
+        }
+        logs('php app/cli.php App\\\\Banner\\\\Task\\\\Monitor process', stdout)
+    })
+})

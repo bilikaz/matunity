@@ -1302,7 +1302,7 @@ contract Matunity is OnChainDataNFT {
     uint256 public commissionsPool;
     uint256 public commissionsMintPool;
 
-    event Roll(address indexed player, uint256 roll);
+    event Roll(address indexed player, uint256 roll, uint256 location, uint256 pointsWon);
     event Won(address indexed player, uint256 points);
     event Earned(uint256 indexed tokenId, uint256 amount);
     event ClaimedEarnings(uint256 indexed tokenId, uint256 amount);
@@ -1415,58 +1415,47 @@ contract Matunity is OnChainDataNFT {
     function roll()
         external
         payable
-        isEligableToRoll(_msgSender())
-        returns (uint256, uint256, bool)
     {
-        return roll(0);
+        roll(0);
     }
 
     function roll(uint256 _randomAdd)
         public
         payable
         isEligableToRoll(_msgSender())
-        returns (uint256, uint256, bool)
     {
         uint256 _roll = (_randomAdd + block.timestamp) % 6 + 1;
-        bool _won = false;
 
-        emit Roll(_msgSender(), _roll);
-
-        if (locations[_msgSender()] > 0) {
-            locations[_msgSender()] = locations[_msgSender()] + _roll;
-            if (locations[_msgSender()] > tokenLimit) {
-                locations[_msgSender()] = 0;
-                points[_msgSender()] = points[_msgSender()] + pointsPerGame;
-                lastGames[_msgSender()] = block.timestamp;
-                _won = true;
-
-                emit Won(_msgSender(), pointsPerGame);
-            }
-        } else {
-            locations[_msgSender()] = _roll;
-        }
         lastRolls[_msgSender()] = _roll;
+        locations[_msgSender()] = locations[_msgSender()] + _roll;
 
-        if (locations[_msgSender()] > 0) {
-            uint256 _amount = msg.value * commissionsNFT / 10000;
-            emit Earned(locations[_msgSender()], _amount);
-            earningsNFT[locations[_msgSender()]] = earningsNFT[locations[_msgSender()]] + _amount;
-            devsPool = devsPool + msg.value * commissionsDevs / 10000;
-            prizePool = prizePool + msg.value * commissionsPool / 10000;
-        } else {
+        if (locations[_msgSender()] > tokenLimit) {
+            locations[_msgSender()] = 0;
+            points[_msgSender()] = points[_msgSender()] + pointsPerGame;
+            lastGames[_msgSender()] = block.timestamp;
+
             //no nft so funds go to prize pool
             prizePool = prizePool + msg.value * commissionsNFT / 10000;
             devsPool = devsPool + msg.value * commissionsDevs / 10000;
             prizePool = prizePool + msg.value * commissionsPool / 10000;
-        }
 
-        return (_roll, locations[_msgSender()], _won);
+            emit Roll(_msgSender(), _roll, locations[_msgSender()], pointsPerGame);
+            emit Won(_msgSender(), pointsPerGame);
+        } else {
+            uint256 _amount = msg.value * commissionsNFT / 10000;
+            earningsNFT[locations[_msgSender()]] = earningsNFT[locations[_msgSender()]] + _amount;
+            devsPool = devsPool + msg.value * commissionsDevs / 10000;
+            prizePool = prizePool + msg.value * commissionsPool / 10000;
+
+            emit Roll(_msgSender(), _roll, locations[_msgSender()], 0);
+            emit Earned(locations[_msgSender()], _amount);
+        }
     }
 
-    function getPlayerData(address _player) view public returns(uint256, uint256, uint256, uint256, bool) {
-        bool _cooldown = false;
+    function getPlayerData(address _player) view public returns(uint256, uint256, uint256, uint256, uint256) {
+        uint256 _cooldown = 0;
         if (lastGames[_player] > 0 && lastGames[_player] + cooldown > block.timestamp) {
-            _cooldown = true;
+            _cooldown = lastGames[_player] + cooldown;
         }
         return (lastRolls[_player], locations[_player], points[_player], lastGames[_player], _cooldown);
     }
