@@ -1,0 +1,89 @@
+<div class="loading-indicator" *ngIf="spinnerService.spin_stack.length != 0">
+    <mat-spinner></mat-spinner>
+</div>
+<div id="site" class="container-fluid no-padding">
+  <div class="header row no-top-margin">
+    <a class="logo" [routerLink]="['']">
+      <img src="/assets/img/logo.png">
+    </a>
+    <div class="top-menu">
+      <div class="prize-pool">
+        <div class="icon"></div>
+        <div class="item">
+          <label>Prize pool</label>
+          <div class="value">{{ managerService.prize_pool?.preview ? managerService.prize_pool.preview : '---' }} {{environment.token}}</div>
+        </div>
+      </div>
+      <div class="coins">
+        <div class="icon"></div>
+        <div class="item">
+          <label>Coins</label>
+          <div class="value">{{ managerService.player_data.points ? managerService.player_data.points : 0 }}</div>
+        </div>
+        <div class="dropdown">
+          <div class="claim-prize" (click)="managerService.claim_prize()">
+            <div class="icon"></div>
+            <div class="info">
+              <span style="color: #FFD25A;">{{managerService.points_for_prize}} Coins </span>to<br>
+              <span style="color: #B8EB58;">{{managerService.prize_percentage}}% ({{managerService.prize}} {{environment.token}})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="balance">
+        <div class="icon"></div>
+        <div class="item">
+          <label>Balance</label>
+          <div class="value">{{web3Service.preview_ether_balance}} {{environment.token}}</div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="web3Service.show_wallet_connect || !web3Service.web3_available" class="metamask-connect-wrap">
+      <div title="Connect with Metamask" *ngIf="web3Service.web3_available" type="button" (click)="web3Service.connect_wallet()" class="metamask-connect"></div>
+      <a title="Connect with Metamask" *ngIf="!web3Service.web3_available" type="button" href="https://metamask.io/" class="metamask-connect"></a>
+    </div>
+  </div>
+  <sidebar-left-comp></sidebar-left-comp>
+  <sidebar-right-comp></sidebar-right-comp>
+  <router-outlet></router-outlet>
+  <div class="forest left"></div>
+  <div class="forest right"></div>
+  <div class="row no-top-margin no-side-margin">
+    <div class="col-12">
+      <div id="board">
+        <div class="finish-gates"></div>
+        <div class="start-gates"></div>
+        <div 
+        *ngFor="let grid of managerService.board.slice().reverse(); let i = index" 
+        class="board-grid" 
+        [ngClass]="{ 'right': managerService.reverse_row(i), 'active': grid.block_id == managerService.player_data.grid, 'owned': !!grid.image }"
+        (click)=navigate_to_block(grid.block_id)
+        >
+            <img *ngIf="grid.image" [src]="grid.image">
+            <div class="overlay"></div>
+            <div class="id"><span>{{grid.block_id}}</span></div>
+        </div>
+        <span class="start noselect">START</span>
+        <span class="finish noselect">FINISH</span>
+        <div id="dice-roll">
+          <div class="inlay"></div>
+          <div class="dice" title="Roll Dice!" [attr.data-lastroll]="managerService.player_data.last_roll" (click)="managerService.roll()"></div>
+          <div class="progress">
+            <span *ngIf="!managerService.player_data.cooldown">
+              {{ managerService.player_data.grid ? managerService.player_data.grid : 0 }} / {{environment.board}} ({{ managerService.game_points ? managerService.game_points : '--' }} Coins)
+            </span>
+            <div *ngIf="managerService.player_data.cooldown > 0">
+              <span>
+                You won {{ managerService.game_points }} Coins!
+              </span><br/>
+              <span>
+                Next game on {{ managerService.player_data.cooldown | date:'short' }}
+              </span>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

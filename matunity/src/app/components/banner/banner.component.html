@@ -1,0 +1,102 @@
+
+
+<div class="content-page block-edit container-fluid">
+    <div class="row no-top-margin"> 
+        <div class="col-12 nft-box">
+          <a class="close" (click)="block_close()">
+            <i class="fas fa-times"></i>
+          </a>
+          <div *ngIf="web3Service.last_transaction?.transactionHash" class="row">
+            <div class="col-12 text-center last-transaction">
+              <span>Please be patient, your data will be updated upon {{environment.network}} Transaction confirmation:</span><br/>
+              <a href="{{environment.scanner}}{{web3Service.last_transaction?.transactionHash}}" target="_blank">{{web3Service.last_transaction?.transactionHash}}</a>
+            </div>
+          </div>
+          <div *ngIf="managerService.banner.banner_attributes && !managerService.active_banner_is_owner && !managerService.active_banner_is_owned" class="row">
+            <div class="col-12 text-center">
+              <h2>Banner - {{managerService.active_banner_id}}</h2>
+              <div class="mint-info">
+                <span>Banner Price</span>
+                <span>{{environment.mint_price}} {{environment.token}}</span>
+              </div>
+              <button *ngIf="web3Service.web3_available && !web3Service.show_wallet_connect" type="button" (click)="mint()" class="btn btn-primary btn-mint">Mint</button>
+              <button *ngIf="web3Service.web3_available && web3Service.show_wallet_connect" type="button" (click)="web3Service.connect_wallet()" class="btn btn-primary btn-connect">To Mint - Connect your Wallet</button>
+              <a href="https://metamask.io" target="_blank" *ngIf="!web3Service.web3_available" class="btn btn-primary btn-connect">To Mint - You will need a Metamask extention</a>
+            </div>
+          </div>
+          <div *ngIf="managerService.banner.banner_attributes && managerService.active_banner_is_owned" class="row">
+            <div class="col-12">
+              <h2>Banner {{managerService.active_banner_id}}</h2>
+            </div>
+          </div>
+          <div *ngIf="managerService.banner.banner_attributes && managerService.active_banner_is_owned" class="row"> 
+            <div *ngIf="managerService.banner.content" class="col-4">
+              <img id="managerService.banner.content" [src]="managerService.banner.content" /><br/>
+              <div *ngIf="managerService.active_banner_is_owner && !show_cropper" class="change-button primary" (click)="nft_uploader.click()">
+                <span>Change image</span>
+              </div>
+              <input hidden type="file" (change)="fileChangeEvent($event)" #nft_uploader>
+            </div>
+            <div class="col-8 info">
+              <span>Name - "{{managerService.banner.name}}"</span><br/>
+              <a *ngIf="managerService.banner.description" href="{{managerService.banner.description | linkHttp }}" target="_blank">{{managerService.banner.description}}</a><br/>
+            </div>
+          </div>
+          <form *ngIf="managerService.active_banner_is_owner" [formGroup]="block_form" (ngSubmit)="set_data()">
+            <div class="row">
+              <div class="col-12">
+                <div *ngIf="!managerService.banner.content && !show_cropper" class="upload-button primary" (click)="nft_uploader.click()">
+                  <i class="fas fa-file-upload"></i>
+                  <span>Select an image to upload</span>
+                  <input hidden type="file" (change)="fileChangeEvent($event)" #nft_uploader>
+                </div>
+              </div>
+              <div *ngIf="show_cropper" class="col-md-8 cropper">
+                <h5>Crop Image</h5>
+                <image-cropper 
+                [imageChangedEvent]="imageChangedEvent" 
+                [maintainAspectRatio]="true" 
+                [aspectRatio]="4 / 4"
+                [resizeToWidth]="environment.grid" 
+                [resizeToHeight]="environment.grid" 
+                format="png" 
+                (imageCropped)="imageCropped($event)" 
+                (imageLoaded)="imageLoaded()"
+                (cropperReady)="cropperReady()" 
+                (loadImageFailed)="loadImageFailed()"></image-cropper>
+              </div>
+              <div *ngIf="croppedImageSrc" class="text-center col-md-4 cropper-preview">
+                  <h5>Preview</h5>
+                  <img [src]="croppedImageSrc" /><br/>
+              </div>
+              <div *ngIf="croppedImageSrc && managerService.banner.content" class="text-center col-12">
+                <button type="button" (click)="submitSrc()" class="btn btn-primary">Submit</button> 
+                <button style="margin-left: 10px;" type="button" (click)="closeCropper()" class="btn btn-primary">Cancel</button> 
+              </div>
+            </div>
+            <div *ngIf="managerService.active_banner_is_owner" class="row input">
+              <div class="col-12">
+                <label *ngIf="managerService.banner.name">Change name of your NFT</label>
+                <label *ngIf="!managerService.banner.name?.length">Set name of your NFT</label>
+                <input formControlName="name" type="text" placeholder="{{managerService.banner.name}}">
+                <button *ngIf="managerService.banner.name" type="button" (click)="set_name()" class="btn btn-primary">Submit</button> 
+              </div>
+            </div>
+            <div *ngIf="managerService.active_banner_is_owner" class="row input">
+              <div class="col-12">
+                <label *ngIf="managerService.banner.description">Change link of your NFT</label>
+                <label *ngIf="!managerService.banner.description?.length">Set link of your NFT</label>
+                <input formControlName="description" type="text" placeholder="{{managerService.banner.description}}">
+                <button *ngIf="managerService.banner.description" type="button" (click)="set_description()" class="btn btn-primary">Submit</button> 
+              </div>
+            </div>
+            <div *ngIf="managerService.active_banner_is_owner && !managerService.banner.name?.length && !managerService.banner.content" class="row">
+              <div class="col-12">   
+                <button type="submit" class="btn btn-primary">Submit your NFT</button> 
+              </div>
+            </div>
+          </form>
+        </div>
+    </div>
+</div>
+

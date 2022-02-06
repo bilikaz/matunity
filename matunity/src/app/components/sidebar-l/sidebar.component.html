@@ -1,0 +1,13 @@
+<div class="sidebar left">
+  <div *ngFor="let banner of managerService.banners_l; let i = index" class="banner">
+    <a *ngIf="banner.banner_attributes && web3Service.account_address && !!web3Service.is_owner_of_resource(banner.banner_attributes.owner)" (click)="navigate_to_banner(i + 1)" class="owner">
+      <img [src]="environment.api_url+'/banners/'+(i+1)+'/image/png'"><br/>
+    </a>
+    <a *ngIf="!banner.banner_attributes" (click)="navigate_to_banner(i + 1)"  class="no owner">
+      <img [src]="environment.api_url+'/banners/'+(i+1)+'/image/png'"><br/>
+    </a>
+    <a *ngIf="banner.banner_attributes && !web3Service.is_owner_of_resource(banner.banner_attributes.owner)" href="{{banner.description | linkHttp}}" target="_blank" class="link">
+      <img [src]="environment.api_url+'/banners/'+(i+1)+'/image/png'"><br/>
+    </a>
+  </div>
+</div>
