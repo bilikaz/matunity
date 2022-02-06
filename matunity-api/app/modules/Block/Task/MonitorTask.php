@@ -40,6 +40,12 @@ class MonitorTask extends Task
                 $event->block_id = $this->blockAnkrManager->getIntFromResponse($log['topics']['2']);
                 $event->event = 'data';
                 $this->blockEventsRepository->save($event);
+            } elseif ($log['topics']['0'] == '0xa331394e065c18c8bfc9725eca8e9563172227caa75f4ec820bae35670f2b7e2') {
+                $event->transaction = $log['transactionHash'];
+                $event->owner = '0x0000000000000000000000000000000000000000';
+                $event->block_id = $this->blockAnkrManager->getIntFromResponse($log['topics']['1']);
+                $event->event = 'earnings';
+                $this->blockEventsRepository->save($event);
             }
         }
 
@@ -92,6 +98,16 @@ class MonitorTask extends Task
             $block->claimed = $data['claimed'];
 
             $block->timestamp_updated = time();
+            $this->blocksRepository->save($block);
+
+            $event->timestamp_processed = time();
+            $this->blockEventsRepository->save($event);
+        } elseif ($event->event == 'earnings') {
+            $block = $this->blocksRepository->getById($event->block_id, true);
+            $data = $this->blockAnkrManager->getTokenData((int) $event->block_id);
+
+            $block->earned = $data['earned'];
+            $block->claimed = $data['claimed'];
             $this->blocksRepository->save($block);
 
             $event->timestamp_processed = time();
