@@ -7,3 +7,29 @@ matunity-api/vendor
 matunity-api/node_modules
 
 #matunity ignores
+
+# compiled output
+matunity-app/dist
+matunity-app/tmp
+matunity-app/out-tsc
+
+# dependencies
+/node_modules
+
+# IDE - VSCode
+matunity-app/.vscode
+matunity-app/.history/*
+
+# misc
+matunity-app/.sass-cache
+matunity-app/connect.lock
+matunity-app/coverage
+matunity-app/libpeerconnection.log
+matunity-app/npm-debug.log
+matunity-app/yarn-error.log
+matunity-app/testem.log
+matunity-app/typings
+
+# System Files
+matunity-app/.DS_Store
+matunity-app/Thumbs.db
