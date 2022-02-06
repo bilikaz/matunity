@@ -1314,10 +1314,10 @@ contract Matunity is OnChainDataNFT {
         prizePool = 0;
         devsPool = 0;
         mintsPool = 0;
-        commissionsNFT = 20;
-        commissionsDevs = 20;
-        commissionsPool = 60;
-        commissionsMintPool = 80;
+        commissionsNFT = 2000;
+        commissionsDevs = 2000;
+        commissionsPool = 6000;
+        commissionsMintPool = 8000;
         rollPrice = _rollPrice;
         pointPrice = _pointPrice;
         pointsPerGame = _pointsPerGame;
